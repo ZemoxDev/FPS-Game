@@ -24,6 +24,8 @@ public class AK47Script : MonoBehaviour
 
     private float nextTimeToFire = 0f;
 
+    public CameraShake cameraShake;
+
     public Animator animator;
 
     [SerializeField] private TextMeshProUGUI reloadUILabel;
@@ -84,6 +86,7 @@ public class AK47Script : MonoBehaviour
     public void Shoot()
     {
         muzzleFlash.Play();
+        StartCoroutine(cameraShake.Shake(.05f, .2f));
 
         currentAmmo--;
 

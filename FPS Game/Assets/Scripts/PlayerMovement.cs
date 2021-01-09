@@ -47,6 +47,13 @@ public class PlayerMovement : MonoBehaviour
     public ParticleSystem speedLinesParticleSystem3;
 
     public float currentSpeed = 0f;
+
+    public string textSignal = "none";
+
+    private bool canDoubleJump = false;
+    private float doubleJumpMultiplier = 2.5f;
+    private float newGravity = -35f;
+
     private enum State
     {
         Normal,
@@ -101,12 +108,27 @@ public class PlayerMovement : MonoBehaviour
 
         controller.Move(move * speed * Time.deltaTime);
 
-        if(Input.GetButtonDown("Jump") && isGrounded)
+        if (isGrounded)
         {
-            velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
+            canDoubleJump = true;
+
+            if (Input.GetButtonDown("Jump"))
+            {
+                velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
+            }
+        }
+        else if (canDoubleJump == true)
+        {
+            Scene scene = SceneManager.GetActiveScene();
+
+            if (Input.GetButtonDown("Jump") && scene.name == "WaveLevel")
+            { 
+                velocity.y = Mathf.Sqrt(jumpHeight * -2f * newGravity * doubleJumpMultiplier);
+                canDoubleJump = false;
+            }
         }
 
-        if(Input.GetKey(KeyCode.LeftShift) && isGrounded)
+        if (Input.GetKey(KeyCode.LeftShift) && isGrounded)
         {
             speed = 20f;
         }
@@ -199,6 +221,59 @@ public class PlayerMovement : MonoBehaviour
         {
             TakeDamage();
         }
+
+        if (other.gameObject.name == "projector")
+        {
+            textSignal = "projector";
+            Debug.Log("Near the Projector");
+        }
+
+        if (other.gameObject.name == "NearThePit")
+        {
+            textSignal = "nearpit";
+            Debug.Log("Near the Pit");
+        }
+
+        if(other.gameObject.name == "PitCollider")
+        {
+            textSignal = "pitcollider";
+            Debug.Log("End of Pit");
+        }
+
+        if (other.gameObject.name == "StairCollider")
+        {
+            textSignal = "staircollider";
+        }
+
+        if(other.gameObject.name == "ElevatorTrigger")
+        {
+            textSignal = "elevatortrigger";
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.name == "projector")
+        {
+            textSignal = "none";
+            Debug.Log("Not near the Projector anymore");
+        }
+
+        if (other.gameObject.name == "NearThePit")
+        {
+            textSignal = "none";
+            Debug.Log("Not near the Pit anymore");
+        }
+
+        if (other.gameObject.name == "PitCollider")
+        {
+            textSignal = "none";
+        }
+
+        if (other.gameObject.name == "StairCollider")
+        {
+            textSignal = "none";
+        }
     }
 
     public void TakeDamage()
@@ -227,7 +302,7 @@ public class PlayerMovement : MonoBehaviour
     {
         Scene scene = SceneManager.GetActiveScene();
 
-        if (TestInputDownHookshot() && scene.name == "3rdLevel" | scene.name == "5thLevel" | scene.name == "TestLevel")
+        if (TestInputDownHookshot() && scene.name == "3rdLevel" | scene.name == "5thLevel" | scene.name == "WaveLevel")
         {
             if (Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out RaycastHit raycastHit, range))
             {

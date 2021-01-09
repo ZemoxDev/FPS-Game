@@ -15,9 +15,12 @@ public class JailBreakoutScript : MonoBehaviour
 
     public PlayerMovement playerSpeed;
 
+    public CameraShake cameraShake;
+
     public Animator anim;
 
-    bool generatorOff;
+    public bool generatorOff;
+    public bool inRoom1 = true;
 
     private void Update()
     {
@@ -31,7 +34,10 @@ public class JailBreakoutScript : MonoBehaviour
             particle.SetActive(false);
             hologram1.SetActive(false);
             hologram2.SetActive(false);
+        }
 
+        if(cabel1.gameObject == null && cabel2.gameObject == null && inRoom1 == true)
+        {
             generatorOff = true;
         }
     }
@@ -44,6 +50,10 @@ public class JailBreakoutScript : MonoBehaviour
             {
                 anim.SetBool("breakout", true);
                 jailCollider.isTrigger = true;
+                generatorOff = false;
+
+                inRoom1 = false;
+                StartCoroutine(cameraShake.Shake(1f, 1.5f));
             }
         }
     }
