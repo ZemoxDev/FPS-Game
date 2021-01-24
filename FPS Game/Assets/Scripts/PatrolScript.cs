@@ -24,13 +24,13 @@ public class PatrolScript : MonoBehaviour
     {
         _navMeshAgent = this.GetComponent<NavMeshAgent>();
 
-        if(_navMeshAgent == null)
+        if (_navMeshAgent == null)
         {
             Debug.LogError("The nav mesh agent is not attached to " + gameObject.name);
         }
         else
         {
-            if(_patrolPoints != null && _patrolPoints.Count >= 2)
+            if (_patrolPoints != null && _patrolPoints.Count >= 2)
             {
                 _currentPatrolIndex = 0;
                 SetDestination();
@@ -44,11 +44,11 @@ public class PatrolScript : MonoBehaviour
 
     void Update()
     {
-        if(_travelling && _navMeshAgent.remainingDistance <= 1.0f)
+        if (_travelling && _navMeshAgent.remainingDistance <= 1.0f)
         {
             _travelling = false;
 
-            if(_patrolWaiting)
+            if (_patrolWaiting)
             {
                 _waiting = true;
                 _waitTimer = 0f;
@@ -65,6 +65,7 @@ public class PatrolScript : MonoBehaviour
             _waitTimer += Time.deltaTime;
             if(_waitTimer >= _totalWaitTime)
             {
+                transform.Rotate(0, 90, 0);
                 _waiting = true;
 
                 ChangePatrolPoint();
@@ -75,7 +76,7 @@ public class PatrolScript : MonoBehaviour
 
     private void SetDestination()
     {
-        if(_patrolPoints != null)
+        if (_patrolPoints != null)
         {
             Vector3 targetVector = _patrolPoints[_currentPatrolIndex].transform.position;
             _navMeshAgent.SetDestination(targetVector);
@@ -85,7 +86,7 @@ public class PatrolScript : MonoBehaviour
 
     private void ChangePatrolPoint()
     {
-        if(UnityEngine.Random.Range(0f, 1f) <= _switchProbability)
+        if (UnityEngine.Random.Range(0f, 1f) <= _switchProbability)
         {
             _patrolForward = !_patrolForward;
         }

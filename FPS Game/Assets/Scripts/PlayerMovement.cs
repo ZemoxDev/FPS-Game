@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -19,6 +20,9 @@ public class PlayerMovement : MonoBehaviour
     public float jumpHeight = 3f;
 
     public float health = 100f;
+    private float currentHealth;
+
+    public float energy = 1000f;
 
     public Transform groundCheck;
     public float groundDistance = 0.4f;
@@ -37,9 +41,11 @@ public class PlayerMovement : MonoBehaviour
     private CameraFov cameraFov;
 
     public GameObject Projectile;
+    public ChasingEnemy chasingEnemy;
 
     private float hookshotSize;
     private Vector3 hookshotPosition;
+    private Vector3 characterVelocityMomentum;
     private State state;
 
     public ParticleSystem speedLinesParticleSystem1;
@@ -51,8 +57,12 @@ public class PlayerMovement : MonoBehaviour
     public string textSignal = "none";
 
     private bool canDoubleJump = false;
-    private float doubleJumpMultiplier = 2.5f;
-    private float newGravity = -35f;
+    private float doubleJumpMultiplier = 2f;
+
+    public float knockBackForce;
+
+    public TextMeshProUGUI healthText;
+    public TextMeshProUGUI energyText;
 
     private enum State
     {
@@ -106,7 +116,19 @@ public class PlayerMovement : MonoBehaviour
 
         Vector3 move = transform.right * x + transform.forward * z;
 
+        move += characterVelocityMomentum;
+
         controller.Move(move * speed * Time.deltaTime);
+
+        if(characterVelocityMomentum.magnitude >= 0f)
+        {
+            float momentumDrag = 3f;
+            characterVelocityMomentum -= characterVelocityMomentum * momentumDrag * Time.deltaTime;
+            if(characterVelocityMomentum.magnitude < .0f)
+            {
+                characterVelocityMomentum = Vector3.zero;
+            }
+        }
 
         if (isGrounded)
         {
@@ -121,14 +143,16 @@ public class PlayerMovement : MonoBehaviour
         {
             Scene scene = SceneManager.GetActiveScene();
 
-            if (Input.GetButtonDown("Jump") && scene.name == "WaveLevel")
-            { 
-                velocity.y = Mathf.Sqrt(jumpHeight * -2f * newGravity * doubleJumpMultiplier);
+            if (Input.GetButtonDown("Jump") && scene.name == "WaveLevel" && energy >= 1f)
+            {
+                velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity * doubleJumpMultiplier);
                 canDoubleJump = false;
+
+                energy -= 50f;
             }
         }
 
-        if (Input.GetKey(KeyCode.LeftShift) && isGrounded)
+        if (Input.GetKey(KeyCode.LeftShift) && Input.GetKey(KeyCode.W) && isGrounded)
         {
             speed = 20f;
         }
@@ -153,6 +177,19 @@ public class PlayerMovement : MonoBehaviour
             gravity = -20f;
             timer = 2f;
         }
+
+        healthText.text = health.ToString();
+        energyText.text = energy.ToString("F0");
+
+        if(energy < 1000f)
+        {
+            energy += 15f * Time.deltaTime;
+        }
+
+        if (health <= 0f)
+        {
+            Die();
+        }
     }
 
     Vector3 lastPosition = Vector3.zero;
@@ -161,17 +198,17 @@ public class PlayerMovement : MonoBehaviour
         currentSpeed = (transform.position - lastPosition).magnitude / Time.fixedDeltaTime;
         lastPosition = transform.position;
 
-        if(currentSpeed <= 15f)
+        if (currentSpeed <= 19f)
         {
             speedLinesParticleSystem1.Play();
         }
 
-        if (currentSpeed <= 20f)
+        if (currentSpeed <= 27f)
         {
             speedLinesParticleSystem2.Play();
         }
 
-        if (currentSpeed <= 25f)
+        if (currentSpeed <= 32f)
         {
             speedLinesParticleSystem3.Play();
         }
@@ -276,13 +313,23 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    public CameraShake cameraShake;
     public void TakeDamage()
     {
         health -= 20f;
-        if (health <= 0f)
-        {
-            Die();
-        }
+        StartCoroutine(cameraShake.Shake(.15f, .3f));
+
+        knockBackForce = 5f;
+        Knockback();
+    }
+     
+    public void BombDamage()
+    {
+        health -= chasingEnemy.damage;
+        StartCoroutine(cameraShake.Shake(.2f, .5f));
+
+        knockBackForce = 20f;
+        Knockback();
     }
 
     public void Die()
@@ -302,7 +349,7 @@ public class PlayerMovement : MonoBehaviour
     {
         Scene scene = SceneManager.GetActiveScene();
 
-        if (TestInputDownHookshot() && scene.name == "3rdLevel" | scene.name == "5thLevel" | scene.name == "WaveLevel")
+        if (TestInputDownHookshot() && scene.name == "3rdLevel" | scene.name == "5thLevel" | scene.name == "WaveLevel" && energy >= 1f)
         {
             if (Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out RaycastHit raycastHit, range))
             {
@@ -311,6 +358,8 @@ public class PlayerMovement : MonoBehaviour
                 hookshotTransform.gameObject.SetActive(true);
                 hookshotTransform.localScale = Vector3.zero;
                 state = State.HookshotThrown;
+
+                energy -= 250f;
             }
         }
     }
@@ -359,10 +408,27 @@ public class PlayerMovement : MonoBehaviour
             cameraFov.SetCameraFov(NORMAL_FOV);
         }
 
+        if(TestInputJump())
+        {
+            characterVelocityMomentum = hookshotDir * speed;
+            state = State.Normal;
+            ResetGravityEffect();
+            hookshotTransform.gameObject.SetActive(false);
+            cameraFov.SetCameraFov(NORMAL_FOV);
+        }
     }
-
     private bool TestInputDownHookshot()
     {
         return Input.GetKeyDown(KeyCode.C);
+    }
+
+    private bool TestInputJump()
+    {
+        return Input.GetKeyDown(KeyCode.Space);
+    }
+
+    public void Knockback()
+    {
+        velocity.y = Mathf.Sqrt(knockBackForce * -2f * gravity);
     }
 }

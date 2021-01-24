@@ -8,7 +8,8 @@ public class ChasingEnemy : MonoBehaviour
     public Transform Player;
     public NavMeshAgent enemy;
 
-    [SerializeField] private Transform respawnPoint;
+    PlayerMovement player;
+    public float damage = 50f;
 
     public GameObject explosionEffect;
 
@@ -16,9 +17,18 @@ public class ChasingEnemy : MonoBehaviour
     public float radius = 2f;
     public float Distance_;
 
+    public int explodingDistance = 3;
+    public int seeingDistance = 200;
+
+    private void Start()
+    {
+        Player = GameObject.FindGameObjectWithTag("Player").transform;
+        player = FindObjectOfType<PlayerMovement>();
+    }
+
     void Update()
     {
-        if(Distance_ < 18)
+        if (Distance_ < seeingDistance)
         {
             enemy.SetDestination(Player.position);
         }
@@ -46,7 +56,6 @@ public class ChasingEnemy : MonoBehaviour
         Destroy(gameObject);
         Debug.Log("Player Damaged");
 
-        Player.transform.position = respawnPoint.transform.position;
-        Physics.SyncTransforms();
+        player.BombDamage();
     }
 }

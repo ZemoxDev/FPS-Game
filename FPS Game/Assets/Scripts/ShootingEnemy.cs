@@ -19,16 +19,20 @@ public class ShootingEnemy : MonoBehaviour
     //Attacking 
     public float timeBetweenAttacks;
     bool alreadyAttacked;
-    public GameObject projectile; 
+    public GameObject projectile;
+    public GameObject shootingPoint;
 
     //States
     public float sightRange, attackRange;
     public bool playerInSightRange, playerInAttackRange;
 
+    private Animator anim;
+
     private void Awake()
     {
         player = GameObject.FindGameObjectWithTag("Player").transform;
         agent = GetComponent<NavMeshAgent>();
+        anim = GetComponent<Animator>();
     }
 
     private void Update()
@@ -52,6 +56,8 @@ public class ShootingEnemy : MonoBehaviour
 
         if (distanceToWalkPoint.magnitude < 1f)
             walkPointSet = false;
+
+        anim.SetBool("shooting", false);
     }
 
     private void SearchWalkPoint()
@@ -65,28 +71,34 @@ public class ShootingEnemy : MonoBehaviour
         {
             walkPointSet = true;
         }
+
+        anim.SetBool("shooting", false);
     }
 
     private void ChasePlayer()
     {
         agent.SetDestination(player.position);
+        anim.SetBool("shooting", false);
     }
 
     private void AttackPlayer()
     {
         agent.SetDestination(transform.position);
 
-        transform.LookAt(player);
+        Vector3 targetPostition = new Vector3(player.position.x, this.transform.position.y, player.position.z);                                                                    
+        this.transform.LookAt(targetPostition);
 
-        if(!alreadyAttacked)
+
+        if (!alreadyAttacked)
         {
-            Rigidbody rb = Instantiate(projectile, transform.position, Quaternion.identity).GetComponent<Rigidbody>();
+            Rigidbody rb = Instantiate(projectile, shootingPoint.transform.position, Quaternion.identity).GetComponent<Rigidbody>();
 
-            rb.AddForce(transform.forward * 26f, ForceMode.Impulse);
-            rb.AddForce(transform.up * 2.5f, ForceMode.Impulse);
+            rb.AddForce(transform.forward * 30f, ForceMode.Impulse);
+            rb.AddForce(transform.up * -1.45f, ForceMode.Impulse);
 
             alreadyAttacked = true;
             Invoke(nameof(ResetAttack), timeBetweenAttacks);
+            anim.SetBool("shooting", true);
         }
 
     }
