@@ -13,10 +13,14 @@ public class Target : MonoBehaviour
     public GameObject healthBarUI;
     public Slider slider;
 
+    public float currencyGain = 2f;
+    private PlayerMovement player;
+
     void Start()
     {
         health = maxHealth;
         slider.value = CalculateHealth();
+        player = FindObjectOfType<PlayerMovement>();
     }
 
     public void TakeDamage(float amount)
@@ -28,10 +32,11 @@ public class Target : MonoBehaviour
         }
     }
 
-    void Die()
+    public void Die()
     {
         Destroy(gameObject);
         Instantiate(explosionEffect, transform.position, transform.rotation);
+        player.currency += currencyGain;
     }
 
     void Update()
@@ -52,5 +57,13 @@ public class Target : MonoBehaviour
     float CalculateHealth()
     {
         return health / maxHealth;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.name == "CakeProjectile")
+        {
+            Die();
+        }
     }
 }

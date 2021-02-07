@@ -24,6 +24,9 @@ public class PlayerMovement : MonoBehaviour
 
     public float energy = 1000f;
 
+    public float currency = 0;
+    public TextMeshProUGUI currencyText;
+
     public Transform groundCheck;
     public float groundDistance = 0.4f;
     public LayerMask groundMask;
@@ -41,7 +44,8 @@ public class PlayerMovement : MonoBehaviour
     private CameraFov cameraFov;
 
     public GameObject Projectile;
-    public ChasingEnemy chasingEnemy;
+    private ChasingEnemy chasingEnemy;
+    private Target target;
 
     private float hookshotSize;
     private Vector3 hookshotPosition;
@@ -79,6 +83,8 @@ public class PlayerMovement : MonoBehaviour
         speedLinesParticleSystem1.Stop();
         speedLinesParticleSystem2.Stop();
         speedLinesParticleSystem3.Stop();
+
+        currency = PlayerPrefs.GetFloat("currency");
     }   
 
     private void Awake()
@@ -90,6 +96,7 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
+        //Hookshot States
         switch(state)
         {
             default:
@@ -104,6 +111,7 @@ public class PlayerMovement : MonoBehaviour
                 break;
         }
 
+        //GroundCheck
         isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
 
         if(isGrounded && velocity.y < 0)
@@ -111,6 +119,7 @@ public class PlayerMovement : MonoBehaviour
             velocity.y = -2f;
         }
 
+        //Mouse Input
         float x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");
 
@@ -118,11 +127,13 @@ public class PlayerMovement : MonoBehaviour
 
         move += characterVelocityMomentum;
 
+        //Move player
         controller.Move(move * speed * Time.deltaTime);
 
+        //Player Velocity
         if(characterVelocityMomentum.magnitude >= 0f)
         {
-            float momentumDrag = 3f;
+            float momentumDrag = 2.5f;
             characterVelocityMomentum -= characterVelocityMomentum * momentumDrag * Time.deltaTime;
             if(characterVelocityMomentum.magnitude < .0f)
             {
@@ -130,6 +141,7 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
+        //Double Jump
         if (isGrounded)
         {
             canDoubleJump = true;
@@ -152,6 +164,7 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
+        //Sprint
         if (Input.GetKey(KeyCode.LeftShift) && Input.GetKey(KeyCode.W) && isGrounded)
         {
             speed = 20f;
@@ -178,23 +191,34 @@ public class PlayerMovement : MonoBehaviour
             timer = 2f;
         }
 
+        //Set HealthText and EnergyText
         healthText.text = health.ToString();
         energyText.text = energy.ToString("F0");
 
+        //Regenerate Energy
         if(energy < 1000f)
         {
-            energy += 15f * Time.deltaTime;
+            energy += 25f * Time.deltaTime;
         }
 
         if (health <= 0f)
         {
             Die();
         }
+
+        //Set Text to currency float
+        currencyText.text = currency.ToString();
+
+        PlayerPrefs.SetFloat("currency", currency);
+
+        //Get the Bomb Enemy Script
+        chasingEnemy = FindObjectOfType<ChasingEnemy>();
     }
 
     Vector3 lastPosition = Vector3.zero;
     private void FixedUpdate()
     {
+        //Check speed and apply speedlines
         currentSpeed = (transform.position - lastPosition).magnitude / Time.fixedDeltaTime;
         lastPosition = transform.position;
 
@@ -316,6 +340,7 @@ public class PlayerMovement : MonoBehaviour
     public CameraShake cameraShake;
     public void TakeDamage()
     {
+        //Damage Player
         health -= 20f;
         StartCoroutine(cameraShake.Shake(.15f, .3f));
 
@@ -325,6 +350,7 @@ public class PlayerMovement : MonoBehaviour
      
     public void BombDamage()
     {
+        //Bomb Player Damage
         health -= chasingEnemy.damage;
         StartCoroutine(cameraShake.Shake(.2f, .5f));
 
@@ -334,6 +360,7 @@ public class PlayerMovement : MonoBehaviour
 
     public void Die()
     {
+        //Player Die
         player.transform.position = respawnPoint.transform.position;
         Physics.SyncTransforms();
 
@@ -342,6 +369,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void ResetGravityEffect()
     {
+        //Reset the gravity
         gravity = -20f;
     }
 
@@ -387,7 +415,7 @@ public class PlayerMovement : MonoBehaviour
         float hookshotSpeedMin = 10f;
         float hookshotSpeedMax = 30f;
         float hookshotSpeed = Mathf.Clamp(Vector3.Distance(transform.position, hookshotPosition), hookshotSpeedMin, hookshotSpeedMax);
-        float hookshotSpeedMultiplier = 4f;
+        float hookshotSpeedMultiplier = 4.5f;
 
         controller.Move(hookshotDir * hookshotSpeed * hookshotSpeedMultiplier * Time.deltaTime);
 

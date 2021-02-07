@@ -854,6 +854,7 @@ MonoBehaviour:
   explosionEffect: {fileID: 191186, guid: 079954accd64b32419ec069129c81273, type: 3}
   healthBarUI: {fileID: 6959534582495510224}
   slider: {fileID: 8862687794991801650}
+  currencyGain: 3
 --- !u!195 &5059545317838588604
 NavMeshAgent:
   m_ObjectHideFlags: 0

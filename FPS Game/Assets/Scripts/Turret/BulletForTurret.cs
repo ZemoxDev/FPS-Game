@@ -20,7 +20,7 @@ public class BulletForTurret : MonoBehaviour
             Destroy(gameObject);
         }
 
-        if (collision.gameObject.tag == "Ground")
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
         {
             Destroy(gameObject);
         }

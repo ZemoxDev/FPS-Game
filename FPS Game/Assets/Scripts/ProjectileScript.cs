@@ -15,5 +15,10 @@ public class ProjectileScript : MonoBehaviour
         {
             Destroy(gameObject);
         }
+
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
+        {
+            Destroy(gameObject);
+        }
     }
 }

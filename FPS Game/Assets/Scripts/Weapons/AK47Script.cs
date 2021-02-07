@@ -43,11 +43,6 @@ public class AK47Script : MonoBehaviour
         weaponSwitching = FindObjectOfType<WeaponSwitching>();
     }
 
-    private void Awake()
-    {
-        hitmarker.SetActive(false);
-    }
-
     void OnEnable()
     {
         isReloading = false;

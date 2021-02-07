@@ -20,6 +20,7 @@ public class ChasingEnemy : MonoBehaviour
     public int explodingDistance = 3;
     public int seeingDistance = 200;
 
+
     private void Start()
     {
         Player = GameObject.FindGameObjectWithTag("Player").transform;

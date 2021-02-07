@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class WaveSpawner : MonoBehaviour
 {
@@ -26,6 +27,9 @@ public class WaveSpawner : MonoBehaviour
     private float searchCountdown = 1f;
 
     private SpawnState state = SpawnState.COUNTING;
+
+    public TextMeshProUGUI waveText;
+    public Animator waveAnim;
 
     void Start()
     {
@@ -55,6 +59,7 @@ public class WaveSpawner : MonoBehaviour
         {
             if(state != SpawnState.SPAWNING)
             {
+                StartCoroutine(StartWaveText());
                 StartCoroutine( SpawnWave ( waves[nextWave] ) );
             }
         }
@@ -111,7 +116,18 @@ public class WaveSpawner : MonoBehaviour
 
         state = SpawnState.WAITING;
 
+        waveText.text = _wave.name;
+
         yield break;
+    }
+
+    IEnumerator StartWaveText()
+    {
+        waveAnim.SetBool("newWave", true);
+
+        yield return new WaitForSeconds(6);
+
+        waveAnim.SetBool("newWave", false);
     }
 
     void SpawnEnemy(Wave _wave)

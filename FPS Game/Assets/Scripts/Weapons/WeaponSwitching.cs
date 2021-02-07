@@ -1,11 +1,17 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class WeaponSwitching : MonoBehaviour
 {
     public int selectedWeapon = 0;
     private AK47Script weaponScript;
+
+    public Image WeaponIconBackground1;
+    public Image WeaponIconBackground2;
+    public Image WeaponIconBackground3;
+    public Image WeaponIconBackground4;
 
     void Start()
     {
@@ -50,25 +56,38 @@ public class WeaponSwitching : MonoBehaviour
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.Alpha5) && transform.childCount >= 5)
-        {
-            if (weaponScript.isReloading == false)
-            {
-                selectedWeapon = 4;
-            }
-        }
-
-        if (Input.GetKeyDown(KeyCode.Alpha6) && transform.childCount >= 6)
-        {
-            if (weaponScript.isReloading == false)
-            {
-                selectedWeapon = 5;
-            }
-        }
-
         if (previousSelectedWeapon != selectedWeapon)
         {
             SelectedWeapon();
+        }
+
+        if(selectedWeapon == 0)
+        {
+            WeaponIconBackground1.enabled = true;
+            WeaponIconBackground2.enabled = false;
+            WeaponIconBackground3.enabled = false;
+            WeaponIconBackground4.enabled = false;
+        }
+        if (selectedWeapon == 1)
+        {
+            WeaponIconBackground1.enabled = false;
+            WeaponIconBackground2.enabled = true;
+            WeaponIconBackground3.enabled = false;
+            WeaponIconBackground4.enabled = false;
+        }
+        if (selectedWeapon == 2)
+        {
+            WeaponIconBackground1.enabled = false;
+            WeaponIconBackground2.enabled = false;
+            WeaponIconBackground3.enabled = true;
+            WeaponIconBackground4.enabled = false;
+        }
+        if (selectedWeapon == 3)
+        {
+            WeaponIconBackground1.enabled = false;
+            WeaponIconBackground2.enabled = false;
+            WeaponIconBackground3.enabled = false;
+            WeaponIconBackground4.enabled = true;
         }
     }
 

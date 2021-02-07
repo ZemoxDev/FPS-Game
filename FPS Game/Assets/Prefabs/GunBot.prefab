@@ -2744,6 +2744,7 @@ MonoBehaviour:
   explosionEffect: {fileID: 191186, guid: 079954accd64b32419ec069129c81273, type: 3}
   healthBarUI: {fileID: 8729618116810509089}
   slider: {fileID: 8729618115425409195}
+  currencyGain: 4
 --- !u!114 &8729618114856762092
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2757,7 +2758,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   agent: {fileID: 8729618114856762088}
-  player: {fileID: 0}
+  player: {fileID: 4173397583875170939, guid: 10397a824a44c0349bc40eb796bcc7be, type: 3}
   whatIsGround:
     serializedVersion: 2
     m_Bits: 256

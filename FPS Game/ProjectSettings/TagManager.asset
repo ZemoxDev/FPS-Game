@@ -13,8 +13,6 @@ TagManager:
   - ChangeScene3
   - Enemy
   - Bullet
-  - CanGrab
-  - Melee
   layers:
   - Default
   - TransparentFX
