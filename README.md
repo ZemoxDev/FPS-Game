@@ -1,6 +1,6 @@
 # FPS-Game
 
-Repository for the 3D Game made with Unity and the C# Language also known as Eremite. This was my first big game project, that also had a multiplayer online version, that never released.
+Repository for the 3D Game made with Unity and the C# Language also known as Eremite. This was my first big game project, that also had a multiplayer online version, that never released. The coding was completely done by me and most of the 3D modelling as well.
 
 https://gamejolt.com/games/eremite/590936
 
