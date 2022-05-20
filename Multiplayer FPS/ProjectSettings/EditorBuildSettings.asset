@@ -1,0 +1,14 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1045 &1
+EditorBuildSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/Multiplayer.unity
+    guid: c313bec9e97ecbc40b9fac0d3892a17f
+  - enabled: 1
+    path: Assets/Scenes/MultiplayerWave.unity
+    guid: 02ab682443caf5e4a82400637eed6e19
+  m_configObjects: {}
