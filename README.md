@@ -1,6 +1,12 @@
 # FPS-Game
 
-Repository for the 3D Game made with Unity and the C# Language also known as Eremite. This was my first big game project, that also had a multiplayer online version, that never released. The coding was completely done by me and most of the 3D modelling as well.
+Repository for the 3D Game made with Unity and the C# Language also known as Eremite.
+
+This repository is made up of the Multiplayer and Singleplayer Version. The Multiplayer could be used as a good starting point for your next multiplayer fps game. It is made with the Photon Engine.
+
+Multiplayer Usage: Go in the "Multiplayer" Scene. Start the game and create a new lobby there anyone with the game installed can join you. Start the game when ready. For each player in the lobby one "Player" Game Object is created on the scene "MultiplayerWave".
+
+Singleplayer Usage: Go in the Wave Scene and start the game.
 
 https://gamejolt.com/games/eremite/590936
 
